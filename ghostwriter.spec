@@ -4,7 +4,7 @@
 %define gitbranchd %(echo %{gitbranch} |sed -e "s,/,-,g")
 
 Name: ghostwriter
-Version: 25.04.0
+Version: 25.04.3
 Release: %{?git:0.%{git}.}1
 Group: Office
 License: GPLv3+ and CC-BY and CC-BY-SA and MPLv1.1 and BSD and LGPLv3 and MIT and ISC
@@ -53,6 +53,11 @@ Requires: qt6-qtwebengine
 Recommends: cmark%{?_isa}
 Recommends: multimarkdown%{?_isa}
 
+%rename plasma6-ghostwriter
+
+BuildSystem: cmake
+BuildOption: -DKDE_INSTALL_USE_QT_SYS_PATHS:BOOL=ON
+
 %description
 Ghostwriter is a text editor for Markdown, which is a plain text markup
 format created by John Gruber. For more information about Markdown, please
@@ -62,20 +67,9 @@ Ghostwriter provides a relaxing, distraction-free writing environment,
 whether your masterpiece be that next blog post, your school paper,
 or your novel.
 
-%prep
-%autosetup -n ghostwriter-%{?git:%{gitbranchd}}%{!?git:%{version}} -p1
+%prep -a
+# We use the system copy
 rm -rf 3rdparty/hunspell
-%cmake \
-	-DBUILD_WITH_QT6:BOOL=ON \
-	-DKDE_INSTALL_USE_QT_SYS_PATHS:BOOL=ON \
-	-G Ninja
-
-%build
-%ninja_build -C build
-
-%install
-%ninja_install -C build
-%find_lang ghostwriter --with-qt --with-man
 
 %files -f ghostwriter.lang
 %{_bindir}/ghostwriter
